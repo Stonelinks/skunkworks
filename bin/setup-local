@@ -1,0 +1,14 @@
+#!/bin/bash
+# set -ex
+
+cd $PROJECT_ROOT
+
+source env.sh
+
+if [[ "$(hostname)" != "pazuzu" ]]; then
+	update-3rdparty-deps
+fi
+
+install-python
+install-go
+install-node

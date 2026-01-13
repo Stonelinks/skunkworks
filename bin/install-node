@@ -1,0 +1,32 @@
+#!/bin/bash
+set -e
+
+cd $PROJECT_ROOT
+
+source env.sh
+
+if command -v bun &>/dev/null && [ "$(bun --version)" = "$BUN_VERSION" ]; then
+	echo "bun is already installed with the correct version"
+else
+	echo "Installing bun"
+	curl -# -fsSL https://bun.sh/install | bash -s "bun-v$BUN_VERSION"
+fi
+
+echo "checking if we have node $NODE_VERSION."
+if [ ! -f $OPT_DIR/node$NODE_VERSION/bin/node ]; then
+	echo "Installing node $NODE_VERSION"
+	NODE_DOWNLOAD_URL=https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-$OS-$ARCH.tar.gz
+	NODE_TMP_PATH=/tmp/node$NODE_VERSION.tar.gz
+	curl -fsSL "$NODE_DOWNLOAD_URL" -o $NODE_TMP_PATH
+	mkdir -p $OPT_DIR/node$NODE_VERSION
+	tar -C $OPT_DIR/node$NODE_VERSION -xzf $NODE_TMP_PATH --strip-components 1
+	rm $NODE_TMP_PATH
+else
+	echo "Node $NODE_VERSION already installed, skipping"
+fi
+
+rm -fr $OPT_DIR/node_modules
+mkdir -p $OPT_DIR/node_modules
+ln -s $PROJECT_ROOT/node_modules $OPT_DIR/node_modules
+bun install
+

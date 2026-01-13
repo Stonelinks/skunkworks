@@ -1,0 +1,32 @@
+#!/bin/bash
+# set -e
+
+cd $PROJECT_ROOT
+
+source env.sh
+
+case $ARCH in
+x64) ARCH=amd64 ;;
+esac
+
+echo "Checking if we have go $GO_VERSION."
+if [ ! -f $OPT_DIR/go$GO_VERSION/bin/go ]; then
+	echo Downloading go.
+	GO_DOWNLOAD_URL=https://golang.org/dl/go$GO_VERSION.$OS-$ARCH.tar.gz
+	GO_TMP_PATH=/tmp/go$GO_VERSION.tar.gz
+	curl -# -fsSL "$GO_DOWNLOAD_URL" -o $GO_TMP_PATH
+	mkdir -p $OPT_DIR/go$GO_VERSION
+	tar -C $OPT_DIR/go$GO_VERSION -xzf $GO_TMP_PATH --strip-components 1
+	rm $GO_TMP_PATH
+
+	echo Resetting go binaries.
+	rm -rf go/bin/*
+fi
+
+echo "Checking goroot symbolic link"
+if [ ! -L "$OPT_DIR/goroot" ] || [ "$(readlink -- $OPT_DIR/goroot)" != "go$GO_VERSION" ]; then
+	echo "Updating $OPT_DIR/goroot -> go$GO_VERSION"
+	ln -sfn "go$GO_VERSION" $OPT_DIR/goroot
+fi
+
+go install mvdan.cc/sh/v3/cmd/shfmt@latest

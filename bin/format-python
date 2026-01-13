@@ -1,0 +1,66 @@
+#!/bin/bash
+# set -e
+
+cd $PROJECT_ROOT
+
+source env.sh
+
+arg_paths=()
+if [ $# -gt 0 ]; then
+	arg_paths=("$@")
+fi
+
+ignore_files=("./tmp")
+
+while IFS= read -r file; do
+	ignore_files+=("$file")
+done < <(
+	git ls-files dagster ray
+)
+
+# if arg_paths is empty, then we will scan the entire project
+if [ ${#arg_paths[@]} -eq 0 ]; then
+	files=()
+	python_paths=()
+	bin_python_paths=()
+
+	# List all tracked files and untracked files not ignored by .gitignore
+	while IFS= read -r file; do
+		files+=("$file")
+	done < <(
+		git ls-files .
+		git ls-files --others --exclude-standard .
+	)
+
+	# Filter array for files with .py extensions and check if they exist
+	for file in "${files[@]}"; do
+		if [[ -f $file && $file == *.py && ! " ${ignore_files[*]} " =~ " ${file} " ]]; then
+			python_paths+=("$file")
+		fi
+	done
+
+	# scan everything in $PROJECT_ROOT/bin. if the file starts with "#!/usr/bin/env python3" then add it to the list
+	for file in $PROJECT_ROOT/bin/*; do
+		if [ -f "$file" ]; then
+			if head -n 1 "$file" | grep -q "#!/usr/bin/env python3"; then
+				bin_python_paths+=("$file")
+			fi
+		fi
+	done
+
+	ruff format "${python_paths[@]}" "${bin_python_paths[@]}"
+	ruff check \
+		--select I001 \
+		--select F401 \
+		--select TID252 \
+		--fix --unsafe-fixes "${python_paths[@]}" "${bin_python_paths[@]}"
+	# pyright "${python_paths[@]}"
+else
+	ruff format "${arg_paths[@]}"
+	ruff check \
+		--select I001 \
+		--select F401 \
+		--select TID252 \
+		--fix --unsafe-fixes "${arg_paths[@]}"
+	# pyright "${arg_paths[@]}"
+fi

@@ -1,0 +1,46 @@
+#!/bin/bash
+# set -ex
+
+# ugly hack to make this runnable on pazuzu
+if [ -z "$PROJECT_ROOT" ]; then
+	PROJECT_ROOT=/home/ld/echoes
+fi
+
+cd $PROJECT_ROOT
+
+source env.sh
+
+function github_update() {
+	GH_USER=$1
+	REPO=$2
+	COMMIT_SHA=$3
+
+	# create a 3rd party dir
+	if [ ! -d $THIRD_PARTY_DIR ]; then
+		mkdir -p $THIRD_PARTY_DIR
+	fi
+
+	# if the dir exists, delete it so it can be replaced with symlink
+	if [ -d $THIRD_PARTY_DIR/$REPO ] && [ ! -L $THIRD_PARTY_DIR/$REPO ]; then
+		rm -rf $THIRD_PARTY_DIR/$REPO
+	fi
+
+	# check if symlink exists and points to the current commit SHA
+	if [ -L "$THIRD_PARTY_DIR/$REPO" ] && [ "$(readlink "$THIRD_PARTY_DIR/$REPO")" == "$THIRD_PARTY_DIR/$REPO-$COMMIT_SHA" ]; then
+		echo "Repo $REPO at commit $COMMIT_SHA already downloaded."
+		return
+	fi
+
+	# download new repo if the symlink doesn't exist or points to a different commit SHA
+	rm -rf /tmp/$REPO-$COMMIT_SHA* $THIRD_PARTY_DIR/$REPO-$COMMIT_SHA*
+	wget https://github.com/$GH_USER/$REPO/archive/$COMMIT_SHA.zip -O /tmp/$REPO-$COMMIT_SHA.zip
+	unzip /tmp/$REPO-$COMMIT_SHA.zip -d /tmp
+	rm /tmp/$REPO-$COMMIT_SHA.zip
+
+	# replace old with new
+	mv /tmp/$REPO-$COMMIT_SHA $THIRD_PARTY_DIR/$REPO-$COMMIT_SHA
+
+	# create symlink
+	ln -sfn $THIRD_PARTY_DIR/$REPO-$COMMIT_SHA $THIRD_PARTY_DIR/$REPO
+}
+

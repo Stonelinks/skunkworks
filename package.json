@@ -1,0 +1,19 @@
+{
+  "name": "",
+  "module": "",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "prettier": "^3.5.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "format": "bun run prettier-fix",
+    "typecheck": "bun run --bun tsc --noEmit",
+    "prettier-fix": "bun run --bun prettier --write ."
+  },
+  "dependencies": {
+  }
+}

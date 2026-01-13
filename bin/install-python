@@ -1,0 +1,38 @@
+#!/bin/bash
+# set -e
+
+cd $PROJECT_ROOT
+
+source env.sh
+
+if [ ! -f $UV_UNMANAGED_INSTALL/uv ]; then
+	echo "uv not found at $UV_UNMANAGED_INSTALL/uv, installing..."
+
+	curl -k -LsSf https://astral.sh/uv/$UV_VERSION/install.sh | env UV_UNMANAGED_INSTALL="$UV_UNMANAGED_INSTALL" sh
+
+	if [ $? -ne 0 ]; then
+		echo "Failed to install uv"
+		return 1
+	fi
+fi
+
+UV_PYTHON=$PYTHON_VERSION
+
+$UV_UNMANAGED_INSTALL/uv venv \
+	--relocatable \
+	--python $UV_PYTHON \
+	--allow-existing \
+	$VIRTUAL_ENV
+
+# install python deps
+# python3 -m pip freeze > requirements.txt
+
+REQ_ARGS=(
+	-r requirements.txt
+)
+
+"$UV_UNMANAGED_INSTALL/uv" pip install \
+	--compile-bytecode \
+	--no-python-downloads \
+	--exact \
+	"${REQ_ARGS[@]}"

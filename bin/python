@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+cwd=$(pwd)
+
+cd $PROJECT_ROOT
+
+source env.sh
+
+format-python
+
+python_bin=$VIRTUAL_ENV/bin/python
+
+cd $cwd
+
+$python_bin "$@"

@@ -1,0 +1,10 @@
+#!/bin/bash
+# set -ex
+
+cd $PROJECT_ROOT
+
+source env.sh
+
+format-shell
+format-python
+format-js
