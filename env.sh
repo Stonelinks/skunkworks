@@ -24,10 +24,10 @@ export THIRD_PARTY_DIR=$HOMEDIR_STORE/3rdparty
 
 export OPT_DIR=$HOMEDIR_STORE/opt
 
-echo "Using DEPLOY_PREFIX=$DEPLOY_PREFIX"
-echo "Using HOMEDIR_STORE=$HOMEDIR_STORE"
-echo "Using THIRD_PARTY_DIR=$THIRD_PARTY_DIR"
-echo "Using OPT_DIR=$OPT_DIR"
+# echo "Using DEPLOY_PREFIX=$DEPLOY_PREFIX"
+# echo "Using HOMEDIR_STORE=$HOMEDIR_STORE"
+# echo "Using THIRD_PARTY_DIR=$THIRD_PARTY_DIR"
+# echo "Using OPT_DIR=$OPT_DIR"
 
 # Figure out what OS we're running.
 case $(uname -s) in
