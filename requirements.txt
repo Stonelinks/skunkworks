@@ -1,0 +1,5 @@
+# Type checking
+basedpyright==1.23.2
+
+# Code formatting and linting
+ruff==0.9.4

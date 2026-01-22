@@ -111,6 +111,3 @@ export PATH
 if [ -f secrets.sh ]; then
 	source secrets.sh
 fi
-
-pyright_version=$(grep -E '^pyright(\[[^]]+\])?==[^#]+' requirements.txt | sed -E 's/^pyright(\[[^]]+\])?==([^#]+)/\2/')
-export PYRIGHT_PYTHON_FORCE_VERSION=$pyright_version

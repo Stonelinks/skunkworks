@@ -1,0 +1,20 @@
+{
+  "include": ["src", "bin"],
+  "exclude": [
+    "**/__pycache__",
+    "**/.pytest_cache",
+    "**/node_modules",
+    "**/.venv",
+    "**/tmp"
+  ],
+  "typeCheckingMode": "standard",
+  "reportMissingImports": true,
+  "reportMissingTypeStubs": false,
+  "pythonVersion": "3.12",
+  "pythonPlatform": "All",
+  "executionEnvironments": [
+    {
+      "root": "src"
+    }
+  ]
+}
