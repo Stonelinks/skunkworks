@@ -1,4 +1,6 @@
 {
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "**/*.d.ts", "**/tmp"],
   "compilerOptions": {
     // Enable latest features
     "lib": ["ESNext", "DOM"],
