@@ -1,5 +1,5 @@
 #!/bin/bash
-# set -e
+set -e
 
 cd $PROJECT_ROOT
 
@@ -12,11 +12,11 @@ fi
 
 ignore_files=("./tmp")
 
-while IFS= read -r file; do
-	ignore_files+=("$file")
-done < <(
-	git ls-files dagster ray
-)
+# while IFS= read -r file; do
+# 	ignore_files+=("$file")
+# done < <(
+# 	git ls-files example-dir
+# )
 
 # if arg_paths is empty, then we will scan the entire project
 if [ ${#arg_paths[@]} -eq 0 ]; then
@@ -54,7 +54,10 @@ if [ ${#arg_paths[@]} -eq 0 ]; then
 		--select F401 \
 		--select TID252 \
 		--fix --unsafe-fixes "${python_paths[@]}" "${bin_python_paths[@]}"
-	# pyright "${python_paths[@]}"
+
+	if [ ${#python_paths[@]} -gt 0 ] || [ ${#bin_python_paths[@]} -gt 0 ]; then
+		basedpyright "${python_paths[@]}" "${bin_python_paths[@]}"
+	fi
 else
 	ruff format "${arg_paths[@]}"
 	ruff check \
@@ -62,5 +65,5 @@ else
 		--select F401 \
 		--select TID252 \
 		--fix --unsafe-fixes "${arg_paths[@]}"
-	# pyright "${arg_paths[@]}"
+	basedpyright "${arg_paths[@]}"
 fi

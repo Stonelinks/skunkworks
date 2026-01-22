@@ -1,10 +1,5 @@
 #!/bin/bash
-# set -ex
-
-# ugly hack to make this runnable on pazuzu
-if [ -z "$PROJECT_ROOT" ]; then
-	PROJECT_ROOT=/home/ld/echoes
-fi
+set -e
 
 cd $PROJECT_ROOT
 
@@ -43,4 +38,3 @@ function github_update() {
 	# create symlink
 	ln -sfn $THIRD_PARTY_DIR/$REPO-$COMMIT_SHA $THIRD_PARTY_DIR/$REPO
 }
-
